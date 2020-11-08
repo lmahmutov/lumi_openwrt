@@ -1,4 +1,8 @@
-# Put your custom commands here that should be executed once
-# the system init finished. By default this file does nothing
-sh /etc/wifi.sh
+echo =============== BT init ======================
+rtk_hciattach -n -s 115200 /dev/ttymxc2 rtk_h5 > /var/hciattach.txt 2>&1 &
+
+echo ============== WIFI init =====================
+
+sh /etc/wifi.sh &
+
 exit 0
