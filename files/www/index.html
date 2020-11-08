@@ -1,0 +1,30 @@
+<html>
+   <head>
+      <script src="jquery.min.js"></script>
+      <script type="text/javascript">
+     $(document).ready(function() {
+        $('#button_ajax').click(function() {
+           alert("Wifi scan started");
+           $.get('cgi-bin/iwscan.cgi', function(data) {
+               $('#ajax').empty().append(data);
+           });
+        });
+    });
+      </script>
+   </head>
+   <body>
+      <button id="button_ajax">Scan wifi network!</button>
+      <div id="ajax">
+         <p>Some random test</p>
+      </div>
+      <div class="container">
+	<form action="/cgi-bin/savewifi.cgi">
+		<label for="ssid"><b>SSID</b></label>
+		<input type="text" placeholder="Enter SSID" id="ssid" name="ssid" required="">
+		<label for="psw"><b>Password</b></label>
+		<input type="text" placeholder="Enter Password" id="psw" name="psw" required="">
+		<button type="submit" >Save wifi settings</button>
+	</form>
+    </div>
+   </body>
+</html>
