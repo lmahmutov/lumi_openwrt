@@ -5,4 +5,7 @@ echo ============== WIFI init =====================
 
 sh /etc/wifi.sh &
 
+echo ============== SOUND init =====================
+alsactl -f /etc/asound.state restore
+
 exit 0
