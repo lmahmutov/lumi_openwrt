@@ -10632,10 +10632,10 @@ static int rtw_priv_get(struct net_device *dev,
 	}
 
 	switch (subcmd) {
-#if defined(CONFIG_RTL8723B)
+#if defined(CONFIG_RTL8723B) && defined(CONFIG_MP_INCLUDED)
 	case MP_SetBT:
-		/* RTW_INFO("set MP_SetBT\n");
-		 rtw_mp_SetBT(dev, info, wdata, extra); */
+		RTW_INFO("set MP_SetBT\n");
+		rtw_mp_SetBT(dev, info, wdata, extra);
 		break;
 #endif
 #ifdef CONFIG_SDIO_INDIRECT_ACCESS

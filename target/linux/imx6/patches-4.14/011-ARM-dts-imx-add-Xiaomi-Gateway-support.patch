@@ -14,7 +14,7 @@ Subject: Add dts support for Xiaomi Lumi Gateway MIEU01.
  	imx6ul-tx6ul-0010.dtb \
 --- a/arch/arm/boot/dts/imx6ull-xiaomi-lumi.dts
 +++ b/arch/arm/boot/dts/imx6ull-xiaomi-lumi.dts
-@@ -0,0 +1,500 @@
+@@ -0,0 +1,495 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +//
 +// Copyright (C) 2016 Freescale Semiconductor, Inc.
@@ -22,7 +22,7 @@ Subject: Add dts support for Xiaomi Lumi Gateway MIEU01.
 +/dts-v1/;
 +
 +#include "imx6ul.dtsi"
-+#include "imx6ull-pinfunc.h"
++#include "imx6ull.dtsi"
 +
 +
 +/ {
