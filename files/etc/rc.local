@@ -1,10 +1,6 @@
 echo =============== BT init ======================
 rtk_hciattach -n -s 115200 /dev/ttymxc2 rtk_h5 > /var/hciattach.txt 2>&1 &
 
-echo ============== WIFI init =====================
-
-sh /etc/wifi.sh &
-
 echo ============== SOUND init =====================
 alsactl -f /etc/asound.state restore
 
