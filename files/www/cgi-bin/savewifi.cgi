@@ -69,7 +69,7 @@ echo "/etc/init.d/network restart" >> /tmp/setwifi.sh
 echo "wifi up" >> /tmp/setwifi.sh
 
 `chmod +x /tmp/setwifi.sh`
-#`/tmp/setwifi.sh &`
+`/tmp/setwifi.sh &`
 
 
 echo
