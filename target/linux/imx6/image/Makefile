@@ -113,6 +113,17 @@ define Build/apalis-emmc
 	$(Build/imx6-combined-image-clean)
 endef
 
+define Build/lumi-append-ubi
+	sh ./ubinize-image.sh \
+		$(IMAGE_ROOTFS) \
+		$@.tmp \
+		-p $(BLOCKSIZE:%k=%KiB) -m $(PAGESIZE) \
+		$(UBINIZE_OPTS)
+	cat $@.tmp >> $@
+	rm $@.tmp
+endef
+
+
 #################################################
 # Devices
 #################################################
@@ -233,9 +244,10 @@ define Device/lumi
   KERNEL_NAME := zImage
   KERNEL_SUFFIX := -zImage
   KERNEL := kernel-bin
-  IMAGES := ubinized.bin sysupgrade.tar dtb
-  IMAGE/ubinized.bin := append-ubi
+  IMAGES := ubinized.bin sysupgrade.tar dtb rootfs.bin
+  IMAGE/ubinized.bin := lumi-append-ubi
   IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
+  IMAGE/rootfs.bin := append-rootfs
   IMAGE/dtb := install-dtb
 
   DEVICE_DTS:= \
