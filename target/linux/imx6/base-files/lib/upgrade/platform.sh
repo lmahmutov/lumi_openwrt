@@ -11,6 +11,9 @@ enable_image_metadata_check() {
 		apalis*)
 			REQUIRE_IMAGE_METADATA=1
 			;;
+		lumi*)
+			REQUIRE_IMAGE_METADATA=0
+			;;
 	esac
 }
 enable_image_metadata_check
@@ -32,6 +35,53 @@ apalis_do_upgrade() {
 	sync
 	umount /boot
 }
+lumi_do_upgrade() {
+	local file_type=$(identify $1)
+	echo $file_type
+
+	if type 'platform_nand_pre_upgrade' >/dev/null 2>/dev/null; then
+		platform_nand_pre_upgrade "$1"
+	fi
+
+	[ ! "$(find_mtd_index "$CI_UBIPART")" ] && CI_UBIPART="rootfs"
+
+	case "$file_type" in
+		"ubi")		lumi_upgrade_ubinized $1;;
+		"ubifs")	lumi_upgrade_ubifs $1;;
+		*)		lumi_upgrade_tar $1;;
+	esac
+}
+lumi_upgrade_tar() {
+	local tar_file="$1"
+	local kernel_mtd="$(find_mtd_index $CI_KERNPART)"
+
+	local board_dir=$(tar tf $tar_file | grep -m 1 '^sysupgrade-.*/$')
+	board_dir=${board_dir%/}
+
+	local kernel_length=`(tar xf $tar_file ${board_dir}/kernel -O | wc -c) 2> /dev/null`
+	local rootfs_length=`(tar xf $tar_file ${board_dir}/root -O | wc -c) 2> /dev/null`
+
+	local rootfs_type="$(identify_tar "$tar_file" ${board_dir}/root)"
+
+	local has_kernel=1
+	local has_env=0
+
+
+	[ "$kernel_length" != 0 -a -n "$kernel_mtd" ] && {
+		tar xf $tar_file ${board_dir}/kernel -O | mtd write - $CI_KERNPART
+		echo "kernel -> mtd$kernel_mtd"
+	}
+
+	echo "root($rootfs_type) -> /dev/ubi0_0"
+	tar xf $tar_file ${board_dir}/root -O | \
+		ubiupdatevol /dev/ubi0_0 -s $rootfs_length -
+
+	sync
+	echo "sysupgrade successful"
+	umount -a
+	reboot -f
+
+}
 
 platform_check_image() {
 	local board=$(board_name)
@@ -41,6 +91,10 @@ platform_check_image() {
 		return 0
 		;;
 	*gw5*)
+		nand_do_platform_check $board $1
+		return $?;
+		;;
+	lumi*)
 		nand_do_platform_check $board $1
 		return $?;
 		;;
@@ -59,6 +113,9 @@ platform_do_upgrade() {
 		;;
 	*gw5*)
 		nand_do_upgrade "$1"
+		;;
+	lumi*)
+		lumi_do_upgrade "$1"
 		;;
 	esac
 }

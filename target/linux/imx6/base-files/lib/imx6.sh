@@ -98,7 +98,9 @@ imx6_board_detect() {
 	"Wandboard i.MX6 Dual Lite Board")
 		name="wandboard"
 		;;
-
+	"Xiaomi Gateway Lumi")
+		name="lumi"
+		;;
 	*)
 		name="generic"
 		;;
