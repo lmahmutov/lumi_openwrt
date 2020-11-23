@@ -53,23 +53,28 @@ lumi_do_upgrade() {
 }
 lumi_upgrade_tar() {
 	local tar_file="$1"
-	local kernel_mtd="$(find_mtd_index $CI_KERNPART)"
-
 	local board_dir=$(tar tf $tar_file | grep -m 1 '^sysupgrade-.*/$')
 	board_dir=${board_dir%/}
 
 	local kernel_length=`(tar xf $tar_file ${board_dir}/kernel -O | wc -c) 2> /dev/null`
 	local rootfs_length=`(tar xf $tar_file ${board_dir}/root -O | wc -c) 2> /dev/null`
-
+	local dtb_length=`(tar xf $tar_file ${board_dir}/dtb -O | wc -c) 2> /dev/null`
 	local rootfs_type="$(identify_tar "$tar_file" ${board_dir}/root)"
 
-	local has_kernel=1
-	local has_env=0
-
-
-	[ "$kernel_length" != 0 -a -n "$kernel_mtd" ] && {
-		tar xf $tar_file ${board_dir}/kernel -O | mtd write - $CI_KERNPART
-		echo "kernel -> mtd$kernel_mtd"
+	[ "$kernel_length" != 0 ] && {
+		tar xf $tar_file ${board_dir}/kernel -O | mtd write - 1
+		echo "kernel -> mtd1"
+	}
+	[ "$dts_length" != 0 ] && {
+		tar xf $tar_file ${board_dir}/dtb -O | mtd write - 2
+		echo "dtb -> mtd2"
+		echo "Prepare ubi partitions"
+		flash_erase /dev/mtd3 0 0
+		ubiformat /dev/mtd3
+		ubiattach /dev/ubi_ctrl -m 3
+		ubimkvol /dev/ubi0 -Nrootfs -s 20MiB
+		ubimkvol /dev/ubi0 -Nrootfs_data -m
+		echo "Ubi partitions ready"
 	}
 
 	echo "root($rootfs_type) -> /dev/ubi0_0"

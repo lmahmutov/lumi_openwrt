@@ -123,6 +123,14 @@ define Build/lumi-append-ubi
 	rm $@.tmp
 endef
 
+define Build/lumi-fullupgrade-tar
+	sh ./sysupgrade-tar.sh \
+		--board $(if $(BOARD_NAME),$(BOARD_NAME),$(DEVICE_NAME)) \
+		--kernel $(call param_get_default,kernel,$(1),$(IMAGE_KERNEL)) \
+		--rootfs $(call param_get_default,rootfs,$(1),$(IMAGE_ROOTFS)) \
+		--dtb $(DTS_DIR)/$(firstword $(DEVICE_DTS)).dtb \
+		$@
+endef
 
 #################################################
 # Devices
@@ -140,6 +148,29 @@ define Device/Default
   KERNEL := kernel-bin | uImage none
   IMAGES :=
 endef
+
+define Device/lumi
+  DEVICE_TITLE := Xiaomi Gateway
+  DEVICE_NAME := lumi
+  PROFILES := xiaomi,gateway-lumi
+  FILESYSTEMS += ubifs
+  UBIFS_OPTS := -m 2048 -e 124KiB -c 2048
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_INSTALL := 0
+  KERNEL_NAME := zImage
+  KERNEL_SUFFIX := -zImage
+  KERNEL := kernel-bin
+  IMAGES := sysupgrade.tar dtb rootfs.bin fullupgrade.tar
+  IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
+  IMAGE/fullupgrade.tar := lumi-fullupgrade-tar
+  IMAGE/rootfs.bin := append-rootfs
+  IMAGE/dtb := install-dtb
+
+  DEVICE_DTS:= \
+	imx6ull-xiaomi-lumi
+endef
+TARGET_DEVICES += lumi
 
 define Device/ventana
   DEVICE_TITLE := Gateworks Ventana family (normal NAND flash)
@@ -233,26 +264,5 @@ define Device/apalis
   ARTIFACT/recovery.scr := recovery-scr
 endef
 TARGET_DEVICES += apalis
-
-define Device/lumi
-  DEVICE_TITLE := Xiaomi Gateway
-  FILESYSTEMS += ubifs
-  UBIFS_OPTS := -m 2048 -e 124KiB -c 2048
-  BLOCKSIZE := 128k
-  PAGESIZE := 2048
-  KERNEL_INSTALL := 0
-  KERNEL_NAME := zImage
-  KERNEL_SUFFIX := -zImage
-  KERNEL := kernel-bin
-  IMAGES := ubinized.bin sysupgrade.tar dtb rootfs.bin
-  IMAGE/ubinized.bin := lumi-append-ubi
-  IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
-  IMAGE/rootfs.bin := append-rootfs
-  IMAGE/dtb := install-dtb
-
-  DEVICE_DTS:= \
-	imx6ull-xiaomi-lumi
-endef
-TARGET_DEVICES += lumi
 
 $(eval $(call BuildImage))
