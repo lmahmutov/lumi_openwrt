@@ -72,7 +72,7 @@ lumi_upgrade_tar() {
 		flash_erase /dev/mtd3 0 0
 		ubiformat /dev/mtd3
 		ubiattach /dev/ubi_ctrl -m 3
-		ubimkvol /dev/ubi0 -Nrootfs -s 20MiB
+		ubimkvol /dev/ubi0 -Nrootfs -s 10MiB
 		ubimkvol /dev/ubi0 -Nrootfs_data -m
 		echo "Ubi partitions ready"
 	}

@@ -34,7 +34,7 @@ ubivol() {
 	else
 		echo "vol_type=dynamic"
 	fi
-	echo "vol_size=20MiB"
+	echo "vol_size=10MiB"
 	if [ "$autoresize" ]; then
 		echo "vol_flags=autoresize"
 	fi
