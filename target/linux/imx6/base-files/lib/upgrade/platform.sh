@@ -62,15 +62,18 @@ lumi_upgrade_tar() {
 	local rootfs_type="$(identify_tar "$tar_file" ${board_dir}/root)"
 
 	[ "$kernel_length" != 0 ] && {
-		tar xf $tar_file ${board_dir}/kernel -O | mtd write - 1
+		tar xf $tar_file ${board_dir}/kernel -O | mtd write - /dev/mtd1
 		echo "kernel -> mtd1"
 	}
-	[ "$dts_length" != 0 ] && {
-		tar xf $tar_file ${board_dir}/dtb -O | mtd write - 2
+	[ "$dtb_length" != 0 ] && {
+		tar xf $tar_file ${board_dir}/dtb -O | mtd write - /dev/mtd2
 		echo "dtb -> mtd2"
 		echo "Prepare ubi partitions"
-		flash_erase /dev/mtd3 0 0
-		ubiformat /dev/mtd3
+		#nand_upgrade_prepare_ubi "$rootfs_length" "$rootfs_type" "1" "0"
+		ubidetach -p /dev/mtd3
+		sync
+		#flash_erase /dev/mtd3 0 0
+		ubiformat /dev/mtd3 -y
 		ubiattach /dev/ubi_ctrl -m 3
 		ubimkvol /dev/ubi0 -Nrootfs -s 10MiB
 		ubimkvol /dev/ubi0 -Nrootfs_data -m
