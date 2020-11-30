@@ -14,16 +14,19 @@ Subject: Add dts support for Xiaomi Lumi Gateway MIEU01.
  	imx6ul-tx6ul-0010.dtb \
 --- a/arch/arm/boot/dts/imx6ull-xiaomi-lumi.dts
 +++ b/arch/arm/boot/dts/imx6ull-xiaomi-lumi.dts
-@@ -0,0 +1,495 @@
+@@ -0,0 +1,517 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +//
 +// Copyright (C) 2016 Freescale Semiconductor, Inc.
 +
 +/dts-v1/;
 +
-+#include "imx6ul.dtsi"
 +#include "imx6ull.dtsi"
 +
++/* Delete UART8 in AIPS-1 (i.MX6UL specific) */
++/delete-node/ &uart8;
++/* Delete CAAM node in AIPS-2 (i.MX6UL specific) */
++/delete-node/ &crypto;
 +
 +/ {
 +	model = "Xiaomi Gateway Lumi";
@@ -120,6 +123,25 @@ Subject: Add dts support for Xiaomi Lumi Gateway MIEU01.
 +			clock-names = "mclk";
 +		};
 +	};
++};
++&cpu0 {
++	clock-frequency = <900000000>;
++	operating-points = <
++		/* kHz	uV */
++		900000	1275000
++		792000	1225000
++		528000	1175000
++		396000	1025000
++		198000	950000
++	>;
++	fsl,soc-operating-points = <
++		/* KHz	uV */
++		900000	1250000
++		792000	1175000
++		528000	1175000
++		396000	1175000
++		198000	1175000
++	>;
 +};
 +
 +&clks {
@@ -510,8 +532,3 @@ Subject: Add dts support for Xiaomi Lumi Gateway MIEU01.
 +	status = "disabled";
 +};
 +
-+&wdog1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wdog>;
-+	fsl,ext-reset-output;
-+};
