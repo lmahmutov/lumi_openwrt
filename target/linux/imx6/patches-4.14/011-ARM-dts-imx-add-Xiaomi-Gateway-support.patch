@@ -23,11 +23,6 @@ Subject: Add dts support for Xiaomi Lumi Gateway MIEU01.
 +
 +#include "imx6ull.dtsi"
 +
-+/* Delete UART8 in AIPS-1 (i.MX6UL specific) */
-+/delete-node/ &uart8;
-+/* Delete CAAM node in AIPS-2 (i.MX6UL specific) */
-+/delete-node/ &crypto;
-+
 +/ {
 +	model = "Xiaomi Gateway Lumi";
 +	compatible = "xiaomi,gateway-lumi", "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
@@ -532,3 +527,8 @@ Subject: Add dts support for Xiaomi Lumi Gateway MIEU01.
 +	status = "disabled";
 +};
 +
++&wdog1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_wdog>;
++	fsl,ext-reset-output;
++};
