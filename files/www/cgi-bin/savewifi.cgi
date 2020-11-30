@@ -63,10 +63,11 @@ echo "uci set wireless.@wifi-iface[0].encryption='psk2'" >> /tmp/setwifi.sh
 echo "uci set wireless.@wifi-iface[0].key='$ARG_PSK'" >> /tmp/setwifi.sh
 echo "uci commit network" >> /tmp/setwifi.sh
 echo "uci commit wireless; wifi" >> /tmp/setwifi.sh
-echo "wifi down" >> /tmp/setwifi.sh
+echo "reboot" >> /tmp/setwifi.sh
+#echo "wifi down" >> /tmp/setwifi.sh
+#echo "/etc/init.d/network restart" >> /tmp/setwifi.sh
+#echo "wifi up" >> /tmp/setwifi.sh
 
-echo "/etc/init.d/network restart" >> /tmp/setwifi.sh
-echo "wifi up" >> /tmp/setwifi.sh
 
 `chmod +x /tmp/setwifi.sh`
 `/tmp/setwifi.sh &`
