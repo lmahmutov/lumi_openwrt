@@ -1,0 +1,71 @@
+<!--
+* Copyright (C) 2012, Freescale Semiconductor, Inc. All Rights Reserved.
+* The CFG element contains a list of recognized usb devices.
+*  DEV elements provide a name, class, vid and pid for each device.
+*
+* Each LIST element contains a list of update instructions.
+*  "Install" - Erase media and install firmware.
+*  "Update" - Update firmware only.
+*
+* Each CMD element contains one update instruction of attribute type.
+*  "pull" - Does UtpRead(body, file) transaction.
+*  "push" - Does UtpWrite(body, file) transaction.
+*  "drop" - Does UtpCommand(body) then waits for device to disconnect.
+*  "boot" - Finds configured device, forces it to "body" device and downloads "file".
+*  "find" - Waits for "timeout" seconds for the "body" device to connect.
+*  "show" - Parse and show device info in "file".  
+-->
+
+
+<UCL>
+  <CFG>
+    <STATE name="BootStrap" dev="MX6ULL" vid="15A2" pid="0080"/>
+    <STATE name="Updater"   dev="MSC" vid="066F" pid="37FF"/>
+  </CFG>
+
+  
+  <LIST name="NAND Flash" desc="Choose NAND as media">
+
+	<CMD state="BootStrap" type="boot" body="BootStrap" file ="firmware/u-boot-small.imx" ifdev="MX6ULL">Loading U-boot</CMD>
+
+	<CMD state="BootStrap" type="load" file="firmware/zImage" address="0x80800000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE" ifdev="MX6UL MX6ULL">Loading Kernel.</CMD>
+
+	<CMD state="BootStrap" type="load" file="firmware/%initramfs%" address="0x83800000"
+				loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE" ifdev="MX6UL MX6ULL">Loading Initramfs.</CMD>
+
+	<CMD state="BootStrap" type="load" file="firmware/xiaomi.dtb" address="0x83000000"
+		loadSection="OTH" setSection="OTH" HasFlashHeader="FALSE" ifdev="MX6ULL">Loading device tree.</CMD>
+
+	<CMD state="BootStrap" type="jump" > Jumping to OS image. </CMD>
+
+	<!--burn the uboot to NAND: -->	
+	<CMD state="Updater" type="push" body="$ mount -t debugfs debugfs /sys/kernel/debug">Mounting debugfs</CMD>
+
+	<!--burn the kernel to NAND: -->
+	<CMD state="Updater" type="push" body="$ flash_erase /dev/mtd1 0 0">Erasing Kernel partition</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/openwrt-imx6-lumi-zImage">Sending kernel zImage</CMD>
+	<CMD state="Updater" type="push" body="$ nandwrite -p /dev/mtd1 -p $FILE">Flashing Kernel</CMD>
+
+	<!--burn the Device Tree to NAND: -->	
+	<CMD state="Updater" type="push" body="$ flash_erase /dev/mtd2 0 0">Erasing dtb partition</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/openwrt-imx6-imx6ull-xiaomi-lumi.dtb" ifdev="MX6ULL">Sending Device Tree file</CMD>
+	<CMD state="Updater" type="push" body="$ nandwrite -p /dev/mtd2 -p $FILE">Flashing dtb</CMD>
+
+	<!--Prepare rootfs - remove block after first use -->
+	<CMD state="Updater" type="push" body="$ flash_erase /dev/mtd3 0 0">Erasing rootfs partition</CMD>
+	<CMD state="Updater" type="push" body="$ ubiformat /dev/mtd3"/>
+	<CMD state="Updater" type="push" body="$ ubiattach /dev/ubi_ctrl -m 3">Attaching UBI partition</CMD>
+	<CMD state="Updater" type="push" body="$ ubimkvol /dev/ubi0 -Nrootfs -s 10MiB"/>
+	<CMD state="Updater" type="push" body="$ ubimkvol /dev/ubi0 -Nrootfs_data -m"/>
+
+	<!--burn the rootfs to NAND: -->
+	<CMD state="Updater" type="push" body="$ ubiattach /dev/ubi_ctrl -m 3">Attaching UBI partition</CMD>
+	<CMD state="Updater" type="push" body="send" file="files/openwrt-imx6-lumi-squashfs-rootfs.bin" ifdev="MX6ULL">Sending and writting rootfs</CMD>
+	<CMD state="Updater" type="push" body="$ ubiupdatevol /dev/ubi0_0 $FILE"/>
+	<CMD state="Updater" type="push" body="frf">Finishing rootfs write</CMD>
+
+  </LIST>
+
+
+</UCL>

@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=Lumi-wifi
+PKG_NAME:=lumi-rtl8723bs
 PKG_RELEASE=2
 
 PKG_LICENSE:=GPLv2
 PKG_LICENSE_FILES:=
 
-PKG_MAINTAINER:=Ben Greear <greearb@candelatech.com>
+PKG_MAINTAINER:=Alexey Sadkov <alx.v.sadkov@gmail.com>
 PKG_BUILD_PARALLEL:=1
 
 STAMP_CONFIGURED_DEPENDS := $(STAGING_DIR)/usr/include/mac80211-backport/backport/autoconf.h
@@ -14,7 +14,7 @@ STAMP_CONFIGURED_DEPENDS := $(STAGING_DIR)/usr/include/mac80211-backport/backpor
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
 
-define KernelPackage/Lumi-wifi
+define KernelPackage/lumi-rtl8723bs
   SUBMENU:=Lumi
   TITLE:=Wireless Drivers for Xiaomi Lumi Gw Realtek rtl8723bs and ...
   DEPENDS:=+kmod-cfg80211 +@DRIVER_11N_SUPPORT
@@ -44,4 +44,4 @@ define Build/Compile
 		modules
 endef
 
-$(eval $(call KernelPackage,Lumi-wifi))
+$(eval $(call KernelPackage,lumi-rtl8723bs))
