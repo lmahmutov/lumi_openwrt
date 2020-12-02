@@ -1,0 +1,14 @@
+<html>
+   <head>
+	   <meta charset="UTF-8"/>
+   </head>
+   <body>
+      <div class="container">
+			<form enctype="multipart/form-data" method="post" action="/cgi-bin/update.cgi">
+    		    <h3>Выберите файл для установки обновления:</h3>
+    		    <input type="file" name="fileToUpload" id="fileToUpload" />
+			    <input type="submit" onclick="if ( !confirm( 'Выполнить установку?' ) ) { return false; }" value="Установить" />
+			</form>
+		</div>
+   </body>
+</html>
