@@ -169,6 +169,10 @@ define Device/lumi
 
   DEVICE_DTS:= \
 	imx6ull-xiaomi-lumi
+  DEVICE_PACKAGES := kmod-lumi-rtl8189es kmod-lumi-rtl8723bs \
+	kmod-sound-core mpg123 uhttpd alsa-utils hostapd \
+	wpa-supplicant libustream-openssl ca-certificates
+
 endef
 TARGET_DEVICES += lumi
 
