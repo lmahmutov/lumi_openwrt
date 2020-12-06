@@ -171,7 +171,8 @@ define Device/lumi
 	imx6ull-xiaomi-lumi
   DEVICE_PACKAGES := kmod-lumi-rtl8189es kmod-lumi-rtl8723bs \
 	kmod-sound-core mpg123 uhttpd alsa-utils hostapd \
-	wpa-supplicant libustream-openssl ca-certificates
+	wpa-supplicant libustream-openssl ca-certificates \
+	git git-http curl wget
 
 endef
 TARGET_DEVICES += lumi

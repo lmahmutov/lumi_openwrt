@@ -1,3 +1,8 @@
+echo ============== LIGHT OFF =====================
+echo 0 > /sys/class/backlight/lumi_r/brightness
+echo 0 > /sys/class/backlight/lumi_g/brightness
+echo 0 > /sys/class/backlight/lumi_b/brightness
+
 echo =============== BT init ======================
 rtk_hciattach -n -s 115200 /dev/ttymxc2 rtk_h5 > /var/hciattach.txt 2>&1 &
 

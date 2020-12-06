@@ -10,9 +10,6 @@ wget https://github.com/lmahmutov/lumi_packages/raw/main/shadow-usermod_4.8.1-1_
 
 echo "start installation"
 opkg update
-opkg install git
-opkg install git-http
-opkg install curl
 opkg install /tmp/liblua5.3-5.3_5.3.5-4_arm_cortex-a9_neon.ipk
 opkg install /tmp/lua5.3_5.3.5-4_arm_cortex-a9_neon.ipk
 opkg install /tmp/domoticz_2020.2-3_arm_cortex-a9_neon.ipk
