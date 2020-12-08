@@ -163,7 +163,7 @@ define Device/lumi
   KERNEL := kernel-bin
   IMAGES := sysupgrade.tar dtb rootfs.bin fullupgrade.tar
   IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
-  IMAGE/fullupgrade.tar := lumi-fullupgrade-tar
+  IMAGE/devupgrade.tar := lumi-fullupgrade-tar
   IMAGE/rootfs.bin := append-rootfs
   IMAGE/dtb := install-dtb
 
