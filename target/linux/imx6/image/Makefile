@@ -172,7 +172,8 @@ define Device/lumi
   DEVICE_PACKAGES := kmod-lumi-rtl8189es kmod-lumi-rtl8723bs \
 	kmod-sound-core mpg123 uhttpd alsa-utils hostapd \
 	wpa-supplicant libustream-openssl ca-certificates \
-	git git-http curl wget
+	git git-http curl wget kmod-button-hotplug kmod-bluetooth \
+	bluez-daemon bluez-libs bluez-utils
 
 endef
 TARGET_DEVICES += lumi

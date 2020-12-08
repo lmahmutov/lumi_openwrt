@@ -56,11 +56,10 @@
 	<CMD state="Updater" type="push" body="$ flash_erase /dev/mtd3 0 0">Erasing rootfs partition</CMD>
 	<CMD state="Updater" type="push" body="$ ubiformat /dev/mtd3"/>
 	<CMD state="Updater" type="push" body="$ ubiattach /dev/ubi_ctrl -m 3">Attaching UBI partition</CMD>
-	<CMD state="Updater" type="push" body="$ ubimkvol /dev/ubi0 -Nrootfs -s 10MiB"/>
+	<CMD state="Updater" type="push" body="$ ubimkvol /dev/ubi0 -Nrootfs -s 50MiB"/>
 	<CMD state="Updater" type="push" body="$ ubimkvol /dev/ubi0 -Nrootfs_data -m"/>
 
 	<!--burn the rootfs to NAND: -->
-	<CMD state="Updater" type="push" body="$ ubiattach /dev/ubi_ctrl -m 3">Attaching UBI partition</CMD>
 	<CMD state="Updater" type="push" body="send" file="files/openwrt-imx6-lumi-squashfs-rootfs.bin" ifdev="MX6ULL">Sending and writting rootfs</CMD>
 	<CMD state="Updater" type="push" body="$ ubiupdatevol /dev/ubi0_0 $FILE"/>
 	<CMD state="Updater" type="push" body="frf">Finishing rootfs write</CMD>

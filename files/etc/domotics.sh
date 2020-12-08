@@ -20,6 +20,12 @@ usermod -a -G dialout domoticz
 
 echo "Add plugin"
 cd /etc/domoticz/plugins/
+DIR="Domoticz-Zigate"
+if [ -d "$DIR" ]; then
+  # Take action if $DIR exists. #
+  echo "previous installation find remove it"
+  rm -r /etc/domoticz/plugins/Domoticz-Zigate
+fi
 git clone https://github.com/pipiche38/Domoticz-Zigate.git
 chmod +x Domoticz-Zigate/plugin.py
 
