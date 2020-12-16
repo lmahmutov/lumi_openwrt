@@ -46,8 +46,8 @@ lumi_do_upgrade() {
 	[ ! "$(find_mtd_index "$CI_UBIPART")" ] && CI_UBIPART="rootfs"
 
 	case "$file_type" in
-		"ubi")		nand_upgrade_ubinized $1;;
-		"ubifs")	nand_upgrade_ubifs $1;;
+		"ubi")		lumi_upgrade_ubinized $1;;
+		"ubifs")	lumi_upgrade_ubifs $1;;
 		*)		lumi_upgrade_tar $1;;
 	esac
 }
@@ -55,34 +55,40 @@ lumi_upgrade_tar() {
 	local tar_file="$1"
 	local board_dir=$(tar tf $tar_file | grep -m 1 '^sysupgrade-.*/$')
 	board_dir=${board_dir%/}
-	
-	local dtb_length=`(tar xf $tar_file ${board_dir}/dtb -O | wc -c) 2> /dev/null`
-	
-	[ "$dtb_length" != 0 ] && {
-		local kernel_length=`(tar xf $tar_file ${board_dir}/kernel -O | wc -c) 2> /dev/null`
-		local rootfs_length=`(tar xf $tar_file ${board_dir}/root -O | wc -c) 2> /dev/null`
-		local rootfs_type="$(identify_tar "$tar_file" ${board_dir}/root)"
 
-		[ "$kernel_length" != 0 ] && {
-			tar xf $tar_file ${board_dir}/kernel -O | mtd write - /dev/mtd1
-			echo "kernel -> mtd1"
-		}
+	local kernel_length=`(tar xf $tar_file ${board_dir}/kernel -O | wc -c) 2> /dev/null`
+	local rootfs_length=`(tar xf $tar_file ${board_dir}/root -O | wc -c) 2> /dev/null`
+	local dtb_length=`(tar xf $tar_file ${board_dir}/dtb -O | wc -c) 2> /dev/null`
+	local rootfs_type="$(identify_tar "$tar_file" ${board_dir}/root)"
+
+	[ "$kernel_length" != 0 ] && {
+		tar xf $tar_file ${board_dir}/kernel -O | mtd write - /dev/mtd1
+		echo "kernel -> mtd1"
+	}
+	[ "$dtb_length" != 0 ] && {
 		tar xf $tar_file ${board_dir}/dtb -O | mtd write - /dev/mtd2
 		echo "dtb -> mtd2"
-
-		echo "root($rootfs_type) -> /dev/ubi0_0"
-		tar xf $tar_file ${board_dir}/root -O | \
-			ubiupdatevol /dev/ubi0_0 -s $rootfs_length -
-		echo "rootfs -> ubi0_0"
-
+		echo "Prepare ubi partitions"
+		#nand_upgrade_prepare_ubi "$rootfs_length" "$rootfs_type" "1" "0"
+		ubidetach -p /dev/mtd3
 		sync
-		echo "sysupgrade successful"
-		umount -a
-		reboot -f
+		#flash_erase /dev/mtd3 0 0
+		ubiformat /dev/mtd3 -y
+		ubiattach /dev/ubi_ctrl -m 3
+		ubimkvol /dev/ubi0 -Nrootfs -s 10MiB
+		ubimkvol /dev/ubi0 -Nrootfs_data -m
+		echo "Ubi partitions ready"
 	}
-	[ "$dtb_length" == 0 ] && {
-		nand_upgrade_tar $tar_file
-	}
+
+	echo "root($rootfs_type) -> /dev/ubi0_0"
+	tar xf $tar_file ${board_dir}/root -O | \
+		ubiupdatevol /dev/ubi0_0 -s $rootfs_length -
+
+	sync
+	echo "sysupgrade successful"
+	umount -a
+	reboot -f
+
 }
 
 platform_check_image() {
