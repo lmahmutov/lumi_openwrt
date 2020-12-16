@@ -24,7 +24,6 @@ uci set network.wwan='interface'
 uci set network.wwan.proto='dhcp'
 uci commit network
 
-/etc/enablestart
 exit 0
 
 
