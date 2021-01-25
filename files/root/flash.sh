@@ -1,5 +1,9 @@
 #!/bin/sh
 
+echo pattern> /sys/class/leds/red/trigger
+echo -1> /sys/class/leds/red/repeat
+echo 0 500 127 500 0 500 255 500 > /sys/class/leds/red/pattern
+
 if [ $# != 1 ] && [ $# != 2 ]
 then
     echo "Error: Invalid arguments"
@@ -62,6 +66,8 @@ echo 0 > /sys/class/gpio/gpio$RESET_PIN_MK/value
 sleep 1
 echo 1 > /sys/class/gpio/gpio$RESET_PIN_MK/value
 sleep 1
+
+echo backlight>/sys/class/leds/red/trigger
 
 exit 0
 
