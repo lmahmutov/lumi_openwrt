@@ -99,7 +99,7 @@ imx6_board_detect() {
 		name="wandboard"
 		;;
 	"Xiaomi Gateway Lumi")
-		name="lumi"
+		name="xiaomi,gateway-lumi"
 		;;
 	*)
 		name="generic"

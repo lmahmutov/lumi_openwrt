@@ -11,7 +11,7 @@ enable_image_metadata_check() {
 		apalis*)
 			REQUIRE_IMAGE_METADATA=1
 			;;
-		lumi*)
+		xiaomi,gateway-lumi*)
 			REQUIRE_IMAGE_METADATA=0
 			;;
 	esac
@@ -96,7 +96,7 @@ platform_check_image() {
 		nand_do_platform_check $board $1
 		return $?;
 		;;
-	lumi*)
+	xiaomi,gateway-lumi*)
 		nand_do_platform_check $board $1
 		return $?;
 		;;
@@ -116,7 +116,7 @@ platform_do_upgrade() {
 	*gw5*)
 		nand_do_upgrade "$1"
 		;;
-	lumi*)
+	xiaomi,gateway-lumi*)
 		lumi_do_upgrade "$1"
 		;;
 	esac
