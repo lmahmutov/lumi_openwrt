@@ -1,5 +1,11 @@
 echo =============== BT init ======================
 rtk_hciattach -n -s 115200 /dev/ttymxc2 rtk_h5 > /var/hciattach.txt 2>&1 &
+echo =============== LED init ======================
+for i in 1 0; do
+  for c in red green blue; do
+    echo $i > /sys/class/leds/$c/brightness
+  done
+done
 
 echo ============== SOUND init =====================
 alsactl -f /etc/asound.state restore

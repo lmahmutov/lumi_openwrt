@@ -15,7 +15,9 @@
       <div id="ajax">
          <p>&nbsp;</p>
       </div>
-
+      <div id="services">
+      
+      </div>
     <script type="text/javascript">
         var counter=0;
         String.prototype.repeat = function(n) {
@@ -65,6 +67,7 @@
                 request.send(null);
 				return false;
             });
+            checkServices();
         }
         function getSsid(){
             var request = new XMLHttpRequest();
@@ -98,6 +101,17 @@
 	        document.getElementById('ajax-loader').innerHTML = (5-counter);
 	        setTimeout("reloadPage()", 1000);
         }
+       function checkServices(port, serviceName){
+            var request = new XMLHttpRequest();
+            request.addEventListener('load', function() {
+                if(request.responseText!="") {
+					document.getElementById('services').innerHTML = request.responseText;
+                }
+            });
+            request.open('GET', '/cgi-bin/checkservices.cgi');
+            request.send(null);
+
+       }
     </script>
    </body>
 </html>
